@@ -9,7 +9,7 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=${NODE_ENV}
-      - DATABASE_HOST=postgres
+      - DATABASE_HOST=localhost
       - DATABASE_PORT=5432
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
