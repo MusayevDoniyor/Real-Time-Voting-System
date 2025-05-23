@@ -5,6 +5,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from './redis/redis.module';
 import { RedisService } from './redis/redis.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { RedisService } from './redis/redis.service';
       inject: [ConfigService],
     }),
     RedisModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, RedisService],
