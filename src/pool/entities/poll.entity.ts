@@ -9,7 +9,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Vote } from './vote.entity';
+import { Vote } from '../../vote/entities/vote.entity';
 
 @ObjectType()
 @Entity('polls')

@@ -8,7 +8,8 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/auth/entities/user.entity';
-import { PollResponse } from './dto/poll.response';
+import { PollResponse, PollResultsResponse } from './dto/poll.response';
+import { UpdatePollInput } from './dto/update-poll.input';
 
 @Resolver(() => Poll)
 @UseGuards(GqlAuthGuard, RolesGuard)
@@ -24,6 +25,12 @@ export class PollResolver {
     return this.pollService.createPoll(createPollInput, user);
   }
 
+  @Mutation(() => PollResponse)
+  @Roles('admin')
+  updatePool(@Args('updatePollInput') updatePollInput: UpdatePollInput) {
+    return this.pollService.updatePoll(updatePollInput.id, updatePollInput);
+  }
+
   @Roles('admin')
   @Query(() => [Poll], { name: 'activePolls' })
   getActivePolls() {
@@ -37,13 +44,13 @@ export class PollResolver {
   }
 
   @Roles('admin')
-  @Query(() => [String], { name: 'pollResults' })
+  @Query(() => PollResultsResponse, { name: 'pollResults' })
   getPollResults(@Args('id') id: string) {
     return this.pollService.getResults(id);
   }
 
   @Roles('admin')
-  @Mutation(() => Poll)
+  @Mutation(() => PollResponse)
   toggleActive(@Args('id') id: string) {
     return this.pollService.toggleActive(id);
   }
