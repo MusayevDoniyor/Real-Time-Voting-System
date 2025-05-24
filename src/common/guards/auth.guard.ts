@@ -1,10 +1,15 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Request } from 'express';
 
 @Injectable()
-export class JwtAuthGuard implements CanActivate {
+export class GqlAuthGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -14,7 +19,12 @@ export class JwtAuthGuard implements CanActivate {
       return this.validateToken(request);
     } else {
       const ctx = GqlExecutionContext.create(context);
-      const request = ctx.getContext().req;
+      const request = ctx.getContext()?.req;
+
+      if (!request) {
+        throw new UnauthorizedException('GraphQL context request not found');
+      }
+
       return this.validateToken(request);
     }
   }
@@ -35,8 +45,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = decoded;
       return true;
     } catch (error) {
-      console.log('Token verification failed:', error.message);
-      return false;
+      throw new UnauthorizedException('Token verification failed');
     }
   }
 }

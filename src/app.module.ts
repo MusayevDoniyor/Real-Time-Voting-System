@@ -6,6 +6,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from './redis/redis.module';
 import { RedisService } from './redis/redis.service';
 import { AuthModule } from './auth/auth.module';
+import { PollModule } from './pool/poll.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -46,8 +50,16 @@ import { AuthModule } from './auth/auth.module';
       },
       inject: [ConfigService],
     }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      playground: true,
+      graphiql: true,
+      autoSchemaFile: join(process.cwd(), '/src/graphql/schema.gql'),
+      sortSchema: true,
+    }),
     RedisModule,
     AuthModule,
+    PollModule,
   ],
   controllers: [AppController],
   providers: [AppService, RedisService],

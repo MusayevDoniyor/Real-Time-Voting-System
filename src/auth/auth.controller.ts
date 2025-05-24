@@ -5,7 +5,7 @@ import { LoginDto } from './dto/login-user.dto';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from './entities/user.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guards/auth.guard';
+import { GqlAuthGuard } from 'src/common/guards/auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -24,7 +24,7 @@ export class AuthController {
 
   @Get('me')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GqlAuthGuard)
   getProfile(@CurrentUser() user: User) {
     return this.authService.getProfile(user.id);
   }

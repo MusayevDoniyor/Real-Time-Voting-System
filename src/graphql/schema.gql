@@ -1,0 +1,85 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreatePollInput {
+  """Poll options"""
+  options: [String!]!
+
+  """Poll question"""
+  question: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  createPool(createPollInput: CreatePollInput!): PollResponse!
+  removePool(id: String!): PollResponse!
+  toggleActive(id: String!): Poll!
+}
+
+type Poll {
+  """Poll created at"""
+  created_at: DateTime!
+
+  """Poll creator"""
+  created_by: User!
+
+  """Poll ID"""
+  id: String!
+
+  """Is poll active"""
+  is_active: Boolean!
+
+  """Poll options"""
+  options: [String!]!
+
+  """Poll question"""
+  question: String!
+
+  """Votes for the poll"""
+  votes: [Vote!]!
+}
+
+type PollResponse {
+  message: String!
+  poll: Poll!
+}
+
+type Query {
+  activePolls: [Poll!]!
+  pollResults(id: String!): [String!]!
+  pool(id: String!): Poll!
+}
+
+type User {
+  """User registered at"""
+  created_at: String!
+
+  """User email"""
+  email: String!
+
+  """User ID"""
+  id: String!
+
+  """User name"""
+  name: String!
+
+  """User role"""
+  role: String!
+}
+
+type Vote {
+  """Vote created at"""
+  createdAt: DateTime!
+
+  """Vote ID"""
+  id: String!
+  poll: Poll!
+
+  """Selected poll option"""
+  selectedOption: String!
+}
