@@ -84,12 +84,7 @@ export class PollService {
       {} as Record<string, number>,
     );
 
-    console.log(votesCount);
-
     const results = poll.options.map((option) => {
-      console.log(option);
-      console.log(votesCount[option.toLowerCase()] || 0);
-
       return {
         option,
         votes: votesCount[option.toLowerCase()] || 0,
