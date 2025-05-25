@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Poll } from 'src/pool/entities/poll.entity';
-import { Vote } from 'src/pool/entities/vote.entity';
+import { Vote } from 'src/vote/entities/vote.entity';
 
 export enum UserRoles {
   ADMIN = 'admin',

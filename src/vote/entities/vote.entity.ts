@@ -8,7 +8,7 @@ import {
   JoinColumn,
   Unique,
 } from 'typeorm';
-import { Poll } from './poll.entity';
+import { Poll } from '../../pool/entities/poll.entity';
 import { User } from 'src/auth/entities/user.entity';
 import { IsNotEmpty } from 'class-validator';
 

@@ -10,6 +10,7 @@ import { PollModule } from './pool/poll.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { VoteModule } from './vote/vote.module';
 
 @Module({
   imports: [
@@ -56,10 +57,18 @@ import { join } from 'path';
       graphiql: true,
       autoSchemaFile: join(process.cwd(), '/src/graphql/schema.gql'),
       sortSchema: true,
+      installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': true,
+      },
+      context: ({ req, connection }) => {
+        return { req, connection };
+      },
     }),
     RedisModule,
     AuthModule,
     PollModule,
+    VoteModule,
   ],
   controllers: [AppController],
   providers: [AppService, RedisService],

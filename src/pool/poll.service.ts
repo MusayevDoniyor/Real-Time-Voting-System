@@ -1,14 +1,11 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePollInput } from './dto/create-poll.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Poll } from './entities/poll.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { PollResponse } from './dto/poll.response';
+import { UpdatePollInput } from './dto/update-poll.input';
 
 @Injectable()
 export class PollService {
@@ -20,7 +17,7 @@ export class PollService {
   async findActivePools() {
     return this.pollRepo.find({
       where: { is_active: true },
-      relations: ['created_by'],
+      relations: ['created_by', 'votes'],
       order: { created_at: 'DESC' },
     });
   }
@@ -53,6 +50,23 @@ export class PollService {
     };
   }
 
+  async updatePoll(
+    id: string,
+    updateData: Partial<UpdatePollInput>,
+  ): Promise<PollResponse> {
+    const poll = await this.pollRepo.findOne({ where: { id } });
+    if (!poll) throw new NotFoundException('Poll not found');
+
+    Object.assign(poll, updateData);
+
+    await this.pollRepo.save(poll);
+
+    return {
+      message: 'Poll updated successfully',
+      poll,
+    };
+  }
+
   async getResults(id: string) {
     const poll = await this.pollRepo.findOne({
       where: { id },
@@ -61,10 +75,30 @@ export class PollService {
 
     if (!poll) throw new NotFoundException('Poll not found');
 
-    const results = poll.options.map((option) => ({
-      option,
-      votes: poll.votes.filter((v) => v.selectedOption === option).length,
-    }));
+    const votesCount = poll.votes.reduce(
+      (acc, v) => {
+        const optionKey = v.selectedOption.toLowerCase();
+        acc[optionKey] = (acc[optionKey] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    console.log(votesCount);
+
+    const results = poll.options.map((option) => {
+      console.log(option);
+      console.log(votesCount[option.toLowerCase()] || 0);
+
+      return {
+        option,
+        votes: votesCount[option.toLowerCase()] || 0,
+        votes_percentage: `${(poll.votes.length > 0
+          ? ((votesCount[option.toLowerCase()] || 0) / poll.votes.length) * 100
+          : 0
+        ).toFixed(2)}%`,
+      };
+    });
 
     return {
       question: poll.question,
@@ -73,13 +107,17 @@ export class PollService {
     };
   }
 
-  async toggleActive(id: string) {
+  async toggleActive(id: string): Promise<PollResponse> {
     const poll = await this.pollRepo.findOne({ where: { id } });
     if (!poll) throw new NotFoundException('Poll not found');
 
     poll.is_active = !poll.is_active;
+    await this.pollRepo.save(poll);
 
-    return this.pollRepo.save(poll);
+    return {
+      message: `Poll ${poll.is_active ? 'activated' : 'deactivated'} successfully`,
+      poll,
+    };
   }
 
   async remove(id: string): Promise<PollResponse> {
