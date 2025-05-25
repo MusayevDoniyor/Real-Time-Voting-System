@@ -65,21 +65,21 @@ import { WsThrottlerGuard } from './common/guards/throttler.guard';
       subscriptions: {
         'graphql-ws': true,
       },
-      // context: ({ req, connection }) => {
-      //   const ip =
-      //     connection?.context?.ip ||
-      //     req?.headers?.['x-forwarded-for']?.split(',')[0]?.trim() ||
-      //     req?.connection?.remoteAddress ||
-      //     '127.0.0.1';
-      //   return {
-      //     req: {
-      //       ...req,
-      //       ip,
-      //       headers: req?.headers || connection?.context?.headers || {},
-      //     },
-      //     connection,
-      //   };
-      // },
+      context: ({ req, connection }) => {
+        const ip =
+          connection?.context?.ip ||
+          req?.headers?.['x-forwarded-for']?.split(',')[0]?.trim() ||
+          req?.connection?.remoteAddress ||
+          '127.0.0.1';
+        return {
+          req: {
+            ...req,
+            ip,
+            headers: req?.headers || connection?.context?.headers || {},
+          },
+          connection,
+        };
+      },
     }),
     RedisModule,
     AuthModule,
