@@ -13,7 +13,7 @@ import { join } from 'path';
 import { VoteModule } from './vote/vote.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
+import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { WsThrottlerGuard } from './common/guards/throttler.guard';
 
 @Module({
